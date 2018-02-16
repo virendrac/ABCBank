@@ -1,10 +1,12 @@
 package com.turvo.bank.controller;
 
 
-import com.turvo.bank.common.EnumIntanceGetter;
-import com.turvo.bank.common.Priority;
-import com.turvo.bank.common.TokenStatus;
-import com.turvo.bank.common.TypeOfService;
+import com.turvo.bank.common.PriorityEnum;
+import com.turvo.bank.common.TokenStatusEnum;
+import com.turvo.bank.common.TypeOfServiceEnum;
+import com.turvo.bank.entity.Counter;
+import com.turvo.bank.entity.Customer;
+import com.turvo.bank.entity.Token;
 import com.turvo.bank.exception.ABCBankException;
 import com.turvo.bank.service.CustomerService;
 import com.turvo.bank.service.ServiceCounterService;
@@ -13,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.turvo.bank.domain.*;
 import java.util.Collection;
 
 import java.util.HashMap;
@@ -47,13 +48,13 @@ public class TokenRestController {
                 Customer currentCustomer = customerService.findOne(token.getCustomerId());
                 if (currentCustomer != null) {
 
-                    if (currentCustomer.getTypeOfCustomer() == TypeOfService.PREMIUM.getValue()) {
-                        token.setPriority(Priority.HIGH.getValue());
+                    if (currentCustomer.getTypeOfCustomer() == TypeOfServiceEnum.PREMIUM.getValue()) {
+                        token.setPriority(PriorityEnum.HIGH.getValue());
                     } else {
-                        token.setPriority(Priority.MEDIUM.getValue());
+                        token.setPriority(PriorityEnum.MEDIUM.getValue());
                     }
 
-                    token.setTokenStatus(TokenStatus.CREATED.getValue());
+                    token.setTokenStatus(TokenStatusEnum.CREATED.getValue());
                     token.setServiceCounterId(counterService.findCounterToBeassigned(token.getServices().get(0)).getServiceCounterId());
 
                     return new ResponseEntity<>(tokenService.save(token), HttpStatus.CREATED);
@@ -91,17 +92,6 @@ public class TokenRestController {
     }
 
 
-    @RequestMapping(
-            value = "updateMessage/{id}",
-            method = RequestMethod.PUT)
-    public ResponseEntity<Token> updateTokenMessage(@PathVariable("id") long id, @RequestBody Token token) {
-
-        Token currentToken = getTokenWithId(id).getBody();
-        currentToken.setMessage(currentToken.getMessage()+"/n"+token.getMessage());
-
-
-        return new ResponseEntity<>(tokenService.saveAndFlush(currentToken), HttpStatus.OK);
-    }
 
     public List<Token> getAllTokensOrderByPriorityAsc(Long id ) throws ABCBankException {
         if(id!=0){
@@ -117,11 +107,10 @@ public class TokenRestController {
     public ResponseEntity<?> displayCounterTokenList() {
         try {
             Map<String, List<Long>> mapTokenCounter = new HashMap<>();
-            List<ServiceCounter> counterlist = (List<ServiceCounter>) counterService.findAll();
+            List<Counter> counterlist = (List<Counter>) counterService.findAll();
             for (int i = 0; i < counterlist.size(); i++) {
                 List<Token> l = getAllTokensOrderByPriorityAsc(counterlist.get(i).getServiceCounterId());
                 mapTokenCounter.put("Counter : " + counterlist.get(i).getService() + counterlist.get(i).getServiceCounterId(), l.stream().map(t -> t.getTokenId()).collect(Collectors.toList()));
-
             }
             return new ResponseEntity<>(mapTokenCounter, HttpStatus.OK);
         }catch (ABCBankException ex){

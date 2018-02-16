@@ -1,10 +1,10 @@
 package com.turvo.bank.common;
 
-public enum Services implements SuperEnum{
+public enum ServicesEnum implements SuperEnum{
     DEPOSIT("DEPOSIT") ,WITHDRAWL("DEPOSIT"),ACCOUNTOPENING("DEPOSIT"),LOAN("DEPOSIT"),OTHER("DEPOSIT");
     private String value;
 
-    Services(String service) {
+    ServicesEnum(String service) {
         value=service;
     }
 

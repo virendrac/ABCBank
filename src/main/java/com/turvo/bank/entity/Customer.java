@@ -1,4 +1,4 @@
-package com.turvo.bank.domain;
+package com.turvo.bank.entity;
 
 import javax.persistence.*;
 

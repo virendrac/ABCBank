@@ -1,6 +1,7 @@
-package com.turvo.bank.domain;
+package com.turvo.bank.entity;
 
-import com.turvo.bank.common.TokenStatus;
+
+import com.turvo.bank.common.TokenStatusEnum;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -132,9 +133,9 @@ public class Token {
         service = services.toString().replaceAll("\\[", "").replaceAll("\\]","");
 
         if(this.service.isEmpty()){
-            this.tokenStatus= TokenStatus.COMPLETED.getValue();
+            this.tokenStatus= TokenStatusEnum.COMPLETED.getValue();
         }else{
-            this.tokenStatus=TokenStatus.PROCESSING.getValue();
+            this.tokenStatus=TokenStatusEnum.PROCESSING.getValue();
         }
     }
 

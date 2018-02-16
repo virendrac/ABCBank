@@ -1,23 +1,23 @@
-package com.turvo.bank.domain;
+package com.turvo.bank.entity;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name="BankOperator")
-public class BankOperator {
+@Table(name="Operator")
+public class Operator {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long operatorId;
     private String name;
     private String designation;
 
-    public BankOperator(Long operatorId, String name, String designation) {
+    public Operator(Long operatorId, String name, String designation) {
         this.operatorId = operatorId;
         this.name = name;
         this.designation = designation;
     }
 
-    public BankOperator() {
+    public Operator() {
     }
 
     public Long getOperatorId() {

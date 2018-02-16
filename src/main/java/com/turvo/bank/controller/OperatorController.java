@@ -1,6 +1,6 @@
 package com.turvo.bank.controller;
 
-import com.turvo.bank.domain.Token;
+import com.turvo.bank.entity.Token;
 import com.turvo.bank.exception.ABCBankException;
 import com.turvo.bank.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/operators")
-public class BankOperatorController {
+public class OperatorController {
 
     @Autowired
     private TokenService tokenService;

@@ -1,7 +1,7 @@
 package com.turvo.bank.service;
 
 
-import com.turvo.bank.domain.Token;
+import com.turvo.bank.entity.Token;
 import com.turvo.bank.exception.ABCBankException;
 import com.turvo.bank.repository.TokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;

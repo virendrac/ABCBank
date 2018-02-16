@@ -1,10 +1,10 @@
-package com.turvo.bank.domain;
+package com.turvo.bank.entity;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name="ServiceCounter")
-public class ServiceCounter {
+@Table(name="Counter")
+public class Counter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -12,12 +12,12 @@ public class ServiceCounter {
     private String service;
 
 
-    public ServiceCounter(Long id, String service) {
+    public Counter(Long id, String service) {
         this.serviceCounterId = id;
         this.service = service;
     }
 
-    public ServiceCounter() {
+    public Counter() {
     }
 
     public Long getServiceCounterId() {

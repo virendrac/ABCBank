@@ -1,10 +1,11 @@
 package com.turvo.bank.common;
 
-public enum TypeOfService  implements SuperEnum{
-    PREMIUM(1),REGULAR(2);
+public enum  PriorityEnum implements SuperEnum{
+    LOW(5),MEDIUM(3),HIGH(1),HIGHVALUE(0);
 
     private int value;
-    TypeOfService(int i) {
+
+    PriorityEnum(int i) {
         value=i;
     }
 

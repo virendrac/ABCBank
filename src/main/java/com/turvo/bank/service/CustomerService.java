@@ -1,6 +1,6 @@
 package com.turvo.bank.service;
 
-import com.turvo.bank.domain.Customer;
+import com.turvo.bank.entity.Customer;
 import com.turvo.bank.exception.ABCBankException;
 import com.turvo.bank.repository.CustomerRepository;
 import org.springframework.stereotype.Service;

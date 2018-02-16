@@ -1,10 +1,10 @@
 package com.turvo.bank.service;
 
 
-import com.turvo.bank.domain.ServiceCounter;
-import com.turvo.bank.domain.Token;
+import com.turvo.bank.entity.Counter;
+import com.turvo.bank.entity.Token;
 import com.turvo.bank.exception.ABCBankException;
-import com.turvo.bank.repository.ServiceCounterRepository;
+import com.turvo.bank.repository.CounterRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,23 +24,23 @@ public class ServiceCounterService {
 
     @PersistenceUnit
     private EntityManagerFactory emf;
-    private ServiceCounterRepository repository;
+    private CounterRepository repository;
 
     @Inject
-    public void setRepository(ServiceCounterRepository repository) {
+    public void setRepository(CounterRepository repository) {
         this.repository = repository;
     }
 
 
-    public ServiceCounter save(ServiceCounter serviceCounter) {
-       return  repository.save( serviceCounter);
+    public Counter save(Counter counter) {
+       return  repository.save(counter);
     }
 
-    public Collection<ServiceCounter> findAll() {
+    public Collection<Counter> findAll() {
         return repository.findAll();
     }
 
-    public Collection<ServiceCounter> findByService(String service) throws ABCBankException {
+    public Collection<Counter> findByService(String service) throws ABCBankException {
         if (service != null && !service.isEmpty()) {
             return repository.findByService(service);
 
@@ -49,7 +49,7 @@ public class ServiceCounterService {
         }
     }
 
-    public ServiceCounter findOne(Long id) throws ABCBankException {
+    public Counter findOne(Long id) throws ABCBankException {
         if(id!=0) {
             return repository.findOne(id);
         }else {
@@ -58,10 +58,10 @@ public class ServiceCounterService {
     }
 
 
-    public List<ServiceCounter> findEmptyCounterByService(String service) throws ABCBankException {
+    public List<Counter> findEmptyCounterByService(String service) throws ABCBankException {
         if(service!=null && !service.isEmpty()){
             EntityManager em=emf.createEntityManager();
-            String query=" FROM ServiceCounter WHERE  service =:service  AND  " +
+            String query=" FROM Counter WHERE  service =:service  AND  " +
                     "serviceCounterId  NOT IN (SELECT serviceCounterId  FROM Token  " +
                     "WHERE  service =:service and tokenStatus <= 50 GROUP BY serviceCounterId ORDER BY COUNT(*) ASC  ) ";
             return em.createQuery(query).setParameter("service",service).getResultList();
@@ -70,10 +70,10 @@ public class ServiceCounterService {
         }
     }
 
-    public List<ServiceCounter> findLessQueueCounterByService(String service) throws ABCBankException {
+    public List<Counter> findLessQueueCounterByService(String service) throws ABCBankException {
         if(service!=null && !service.isEmpty()){
             EntityManager em=emf.createEntityManager();
-            String query=" FROM ServiceCounter WHERE  service =:service  AND  " +
+            String query=" FROM Counter WHERE  service =:service  AND  " +
                     "serviceCounterId  IN (SELECT serviceCounterId  FROM Token  " +
                     "WHERE  service =:service and tokenStatus <= 50 GROUP BY serviceCounterId ORDER BY COUNT(*) ASC  ) ";
             return em.createQuery(query).setParameter("service",service).getResultList();
@@ -84,9 +84,9 @@ public class ServiceCounterService {
 
 
     //Assigning service counter which has the least number of waiting queue.
-    public ServiceCounter findCounterToBeassigned(String service) throws ABCBankException {
+    public Counter findCounterToBeassigned(String service) throws ABCBankException {
         if(service!=null && !service.isEmpty()){
-            List<ServiceCounter> counter=findEmptyCounterByService(service);
+            List<Counter> counter=findEmptyCounterByService(service);
             if(counter==null || counter.isEmpty() ){
                 counter=findLessQueueCounterByService(service);
             }

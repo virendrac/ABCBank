@@ -1,6 +1,6 @@
 package com.turvo.bank.repository;
 
-import com.turvo.bank.domain.Token;
+import com.turvo.bank.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
