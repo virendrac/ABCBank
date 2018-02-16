@@ -17,6 +17,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     generate-ddl: false
+    spring.jpa.properties.hibernate.enable_lazy_load_no_trans: false
 # Logger configuration
 logging:
   pattern:

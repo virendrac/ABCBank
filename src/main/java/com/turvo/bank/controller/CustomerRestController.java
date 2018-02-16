@@ -1,6 +1,7 @@
 package com.turvo.bank.controller;
 
 
+import com.turvo.bank.exception.ABCBankException;
 import com.turvo.bank.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,43 +40,44 @@ public class CustomerRestController {
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.GET)
-    public ResponseEntity<Customer> getCustomerWithId(@PathVariable Long id) {
-        return new ResponseEntity<>(customerService.findOne(id), HttpStatus.OK);
+    public ResponseEntity<?> getCustomerWithId(@PathVariable Long id) {
+       try{
+           return new ResponseEntity<>(customerService.findOne(id), HttpStatus.OK);
+        }catch(ABCBankException ex)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ABCBankException:: " + ex.getMessage() );
+        }
     }
 
     @RequestMapping(
             params = {"name"},
             method = RequestMethod.GET)
-    public ResponseEntity<Collection<Customer>> findCustomerWithName(@RequestParam(value = "name") String name) {
-        return new ResponseEntity<>(customerService.findByName(name), HttpStatus.OK);
+    public ResponseEntity<?> findCustomerWithName(@RequestParam(value = "name") String name) {
+       try{
+           return new ResponseEntity<>(customerService.findByName(name), HttpStatus.OK);
+        }catch(ABCBankException ex)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ABCBankException:: " + ex.getMessage() );
+        }
     }
 
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT)
-    public ResponseEntity<Customer> updateCustomerFromDB(@PathVariable("id") long id, @RequestBody Customer customer) {
+    public ResponseEntity<?> updateCustomerFromDB(@PathVariable("id") long id, @RequestBody Customer customer) {
+        try{
+            Customer currentCustomer = customerService.findOne(id);
+            currentCustomer.setName(customer.getName());
+            currentCustomer.setName(customer.getName());
+            currentCustomer.setPhone(customer.getPhone());
+            currentCustomer.setAddress(customer.getAddress());
+            currentCustomer.setTypeOfCustomer(customer.getTypeOfCustomer());
 
-        Customer currentCustomer = customerService.findOne(id);
-        currentCustomer.setName(customer.getName());
-        currentCustomer.setName(customer.getName());
-        currentCustomer.setPhone(customer.getPhone());
-        currentCustomer.setAddress(customer.getAddress());
-        currentCustomer.setTypeOfCustomer(customer.getTypeOfCustomer());
-
-        return new ResponseEntity<>(customerService.save(currentCustomer), HttpStatus.OK);
-    }
-
-    @RequestMapping(
-            value = "/{id}",
-            method = RequestMethod.DELETE)
-    public void deleteCustomerWithId(@PathVariable Long id) {
-        customerService.delete(id);
-    }
-
-    @RequestMapping(
-            method = RequestMethod.DELETE)
-    public void deleteAllCustomers() {
-        customerService.deleteAll();
+            return new ResponseEntity<>(customerService.save(currentCustomer), HttpStatus.OK);
+        }catch(ABCBankException ex)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ABCBankException:: " + ex.getMessage() );
+        }
     }
 
 }

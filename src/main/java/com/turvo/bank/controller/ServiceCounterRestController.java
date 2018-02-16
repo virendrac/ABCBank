@@ -1,6 +1,8 @@
 package com.turvo.bank.controller;
 
 
+import com.turvo.bank.domain.Token;
+import com.turvo.bank.exception.ABCBankException;
 import com.turvo.bank.service.ServiceCounterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,42 +35,63 @@ public class ServiceCounterRestController {
         return new ResponseEntity<>(counterService.findAll(), HttpStatus.OK);
     }
 
-    public ResponseEntity<Collection<ServiceCounter>> getAllServiceCounters(String service) {
-        return new ResponseEntity<>(counterService.findByService(service), HttpStatus.OK);
+    public ResponseEntity<?> getAllServiceCounters(String service) {
+         try{
+             return new ResponseEntity<>(counterService.findByService(service), HttpStatus.OK);
+        } catch (ABCBankException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ABCBankException:: " + ex.getMessage() );
+        }
     }
 
 
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.GET)
-    public ResponseEntity<ServiceCounter> getServiceCounterWithId(@PathVariable Long id) {
-        return new ResponseEntity<>(counterService.findOne(id), HttpStatus.OK);
+    public ResponseEntity<?> getServiceCounterWithId(@PathVariable Long id) {
+        try{
+            return new ResponseEntity<>(counterService.findOne(id), HttpStatus.OK);
+        } catch (ABCBankException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ABCBankException:: " + ex.getMessage() );
+        }
+
     }
 
 
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT)
-    public ResponseEntity<ServiceCounter> updateServiceCounterFromDB(@PathVariable("id") long id, @RequestBody ServiceCounter serviceCounter) {
+    public ResponseEntity<?> updateServiceCounterFromDB(@PathVariable("id") long id, @RequestBody ServiceCounter serviceCounter) {
 
-        ServiceCounter currentServiceCounter = counterService.findOne(id);
-        currentServiceCounter.setServiceCounterId(serviceCounter.getServiceCounterId());
-        currentServiceCounter.setService(serviceCounter.getService());
-        return new ResponseEntity<>(counterService.save(currentServiceCounter), HttpStatus.OK);
+        try {
+            ServiceCounter currentServiceCounter = null;
+
+            currentServiceCounter = counterService.findOne(id);
+
+            currentServiceCounter.setServiceCounterId(serviceCounter.getServiceCounterId());
+            currentServiceCounter.setService(serviceCounter.getService());
+            return new ResponseEntity<>(counterService.save(currentServiceCounter), HttpStatus.OK);
+        } catch (ABCBankException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ABCBankException:: " + ex.getMessage() );
+        }
     }
 
     @RequestMapping(
-            value = "/{id}",
-            method = RequestMethod.DELETE)
-    public void deleteServiceCounterWithId(@PathVariable Long id) {
-        counterService.delete(id);
+            value = "nextTokens/{id}",
+            method = RequestMethod.GET)
+    public ResponseEntity<?> getNextTokenToServe(@PathVariable("id") long id){
+        try{
+            if(counterService.findOne(id)!=null){
+                return new ResponseEntity<Token>(counterService.getNextTokenForThisServiceCounter(id), HttpStatus.OK);
+            }else{
+                return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Enter correct ServiceCounterId!");
+            }
+        }catch(ABCBankException ex)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ABCBankException:: " + ex.getMessage() );
+        }
     }
 
-    @RequestMapping(
-            method = RequestMethod.DELETE)
-    public void deleteAllServiceCounters() {
-        counterService.deleteAll();
-    }
+
 
 
 }
