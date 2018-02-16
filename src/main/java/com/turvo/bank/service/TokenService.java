@@ -1,6 +1,8 @@
 package com.turvo.bank.service;
 
 
+import com.turvo.bank.common.EnumIntanceGetter;
+import com.turvo.bank.common.TokenStatusEnum;
 import com.turvo.bank.entity.Token;
 import com.turvo.bank.exception.ABCBankException;
 import com.turvo.bank.repository.TokenRepository;
@@ -98,6 +100,24 @@ public class TokenService {
             return tokens.get(0);
         }else{
             throw new ABCBankException("No Tokens to serve at the time.");
+        }
+    }
+
+    public Token markToken(Token token) throws ABCBankException {
+        if(token!=null) {
+            Token currentToken = repository.findOne(token.getTokenId());
+            if(currentToken!=null){
+                if(currentToken.getTokenStatus() < 90 && EnumIntanceGetter.getEnumInstance(TokenStatusEnum.class,token.getTokenStatus()) !=null){
+                    currentToken.setTokenStatus(token.getTokenStatus());
+                    return repository.saveAndFlush(currentToken);
+                }else {
+                    throw new ABCBankException("Wrong status");
+                }
+            }else {
+                throw new ABCBankException("Invalid Token_Id");
+            }
+        }else{
+            throw new ABCBankException("Invalid Token");
         }
     }
 }

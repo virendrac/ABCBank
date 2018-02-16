@@ -34,4 +34,20 @@ public class OperatorController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ABCBankException:: " + ex.getMessage() );
         }
     }
+
+    @RequestMapping(
+            value = "mark/",
+            method = RequestMethod.POST)
+    public ResponseEntity<?> markToken(@RequestBody Token token) {
+        try{
+            if (token != null ) {
+                return new ResponseEntity<>(tokenService.markToken(token), HttpStatus.OK);
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Token!");
+            }
+        }catch(ABCBankException ex)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ABCBankException:: " + ex.getMessage() );
+        }
+    }
 }
