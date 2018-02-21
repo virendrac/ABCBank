@@ -6,9 +6,12 @@ import javax.persistence.*;
 @Table(name="Operator")
 public class Operator {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name ="OPERATOR_ID")
     private Long operatorId;
+    @Column(name ="NAME")
     private String name;
+    @Column(name ="DESIGNATION")
     private String designation;
 
     public Operator(Long operatorId, String name, String designation) {

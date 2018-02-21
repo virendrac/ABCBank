@@ -14,21 +14,30 @@ import java.util.stream.Collectors;
 public class Token {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name ="TOKEN_ID")
     private Long tokenId;
-    private Long customerId;
+
+    @ManyToOne
+    @JoinColumn(name="customerId")
+    private Customer customer;
+    @Column(name ="TOKEN_STATUS")
     private int tokenStatus;
+    @Column(name ="PRIORITY")
     private int priority;
 
     @Transient
     private List<String> services;
+    @Column(name ="SERVICE")
     private String service;
+    @Column(name ="SERVICE_COUNTER_ID")
     private long serviceCounterId;
+    @Column(name ="MESSAGE")
     private String message ;
 
-    public Token(Long id, Long customerId, int tokenStatus, int priority, String service, long serviceCounterId, String message) {
+    public Token(Long id, Customer customer, int tokenStatus, int priority, String service, long serviceCounterId, String message) {
         this.tokenId = id;
-        this.customerId = customerId;
+        this.customer = customer;
         this.tokenStatus = tokenStatus;
         this.priority = priority;
         this.service=service;
@@ -48,12 +57,12 @@ public class Token {
         this.tokenId = id;
     }
 
-    public Long getCustomerId() {
-        return customerId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public int getTokenStatus() {
@@ -115,7 +124,7 @@ public class Token {
     public String toString() {
         return "Token : {" +
                 "tokenId=" + tokenId +
-                ", customerId=" + customerId +
+                ", customer=" + customer.toString() +
                 ", tokenStatus=" + tokenStatus +
                 ", priority=" + priority +
                 ", service='[ " + service + "\\] \' " +

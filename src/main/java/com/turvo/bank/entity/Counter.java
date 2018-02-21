@@ -3,12 +3,15 @@ package com.turvo.bank.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name="Counter")
+@Table(name="SERVICE_COUNTER")
 public class Counter {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name ="SERVICE_COUNTER_ID")
     private Long serviceCounterId;
+
+    @Column(name ="SERVICE")
     private String service;
 
 

@@ -31,15 +31,14 @@ Password : user
 
 # POST : http://localhost:8080/api/tokens/ Creating new Tokens
 
-                1) BODY for new customer : {
-                   	"customer":"{             'name': 'Virendra Chouhan',        'phone': 1234567890,        'address': 'Jubilee Hills',        'typeOfService': 'R'    }" ,
-                   	"remarks" : "HIGHVALUE"
-                   }
-                2) BODY for Existing customer : {
-                                                	"token":"{'customerId': 20}" ,
-                                                	"remarks" : "HIGHVALUE"
-
-                                                }
+                1){
+                  	"customer": {
+                  		"customerId":"160"
+                  		
+                  	},
+                  	"service":"LOAN ",
+                  	"message":"LOAN APPLICATION"
+                  }
 
 # PUT : http://localhost:8080/api/tokens/tokenProcess/{tokenId} : for serving the customer token
                 1).Body for single counter service of the token

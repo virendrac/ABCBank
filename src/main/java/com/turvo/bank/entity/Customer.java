@@ -1,27 +1,41 @@
 package com.turvo.bank.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="Customer")
 public class Customer {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name ="CUSTOMER_ID")
     private Long customerId;
+
+    @Column(name ="NAME")
     private String name;
+    @Column(name ="PHONE")
     private long phone;
+    @Column(name ="ADDRESS")
     private String address;
+    @Column(name ="TYPE_OF_CUSTOMER")
     private int typeOfCustomer;
 
-    public Customer(Long customerId, String name, long phone, String address, int typeOfCustomer) {
-        this.customerId = customerId;
-        this.name = name;
-        this.phone = phone;
-        this.address = address;
-        this.typeOfCustomer = typeOfCustomer;
-    }
+    @JsonIgnore
+    @OneToMany(mappedBy="customer")
+    private Set<Token> tokens;
 
     public Customer() {
+    }
+
+    public Set<Token> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(Set<Token> tokens) {
+        this.tokens = tokens;
     }
 
     public Long getCustomerId() {
@@ -64,6 +78,7 @@ public class Customer {
         this.typeOfCustomer = typeOfCustomer;
     }
 
+
     @Override
     public String toString() {
         return "Customer{" +
@@ -71,7 +86,8 @@ public class Customer {
                 ", name='" + name + '\'' +
                 ", phone=" + phone +
                 ", address='" + address + '\'' +
-                ", typeOfCustomer='" + typeOfCustomer + '\'' +
+                ", typeOfCustomer=" + typeOfCustomer +
+                ", tokens=" + tokens +
                 '}';
     }
 }

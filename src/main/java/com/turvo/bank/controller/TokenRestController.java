@@ -44,8 +44,8 @@ public class TokenRestController {
     public ResponseEntity<?> createToken(@RequestBody Token token) {
 
         try {
-            if (token.getCustomerId() != null) {
-                Customer currentCustomer = customerService.findOne(token.getCustomerId());
+            if ( token.getCustomer()!=null && token.getCustomer().getCustomerId()!=null){
+                Customer currentCustomer = customerService.findOne(token.getCustomer().getCustomerId());
                 if (currentCustomer != null) {
 
                     if (currentCustomer.getTypeOfCustomer() == TypeOfServiceEnum.PREMIUM.getValue()) {
@@ -56,7 +56,7 @@ public class TokenRestController {
 
                     token.setTokenStatus(TokenStatusEnum.CREATED.getValue());
                     token.setServiceCounterId(counterService.findCounterToBeassigned(token.getServices().get(0)).getServiceCounterId());
-
+                    token.setCustomer(currentCustomer);
                     return new ResponseEntity<>(tokenService.save(token), HttpStatus.CREATED);
 
                 } else {
