@@ -22,16 +22,12 @@ mvn spring-boot:run
 User Name : user
 Password : user
 
-# GET : http://localhost:8080/api/customers/display :a service that displays a list of service counters and token numbers which are not yet processed
-                                                        or in queue for multi counter processing, in order of serving priority based on token priority.
-
-
-# GET : http://localhost:8080/api/tokens/ getting list of all tokens
 
 
 # POST : http://localhost:8080/api/tokens/ Creating new Tokens
 
-                1){
+                1)for single service :
+                {
                   	"customer": {
                   		"customerId":"160"
                   		
@@ -39,31 +35,30 @@ Password : user
                   	"service":"LOAN ",
                   	"message":"LOAN APPLICATION"
                   }
+                2) for multi service : 
+                {
+                    "customer": {
+                        "customerId":"160"
+                        
+                    },
+                    "service":"LOAN , DEPOSIT ",
+                    "message":"message here"
+                 }
 
-# PUT : http://localhost:8080/api/tokens/tokenProcess/{tokenId} : for serving the customer token
-                1).Body for single counter service of the token
-                   {
-                        "token":"{ 'message':'Loan process initiated'}"
-                   }
-                 2).Body for Multi counter service of the token
-                    {
-                        "token":"{ 'message':'Loan process initiated'}" ,
-                        "nextServiceCounter" :2
-                     }
-
-
-
-# http://localhost:8080/api/tokens/12 getting list of token with id = 12
-# http://localhost:8080/api/tokens/updateStatus/1/CREATED
-
-# http://localhost:8080/api/tokens/ POST
- {
-        "customerId": 20,
-        "typeOfService": "P"
- }
+#http://localhost:8080/api/operators/service/ POST : for serving the token
+                {
+                	"tokenId":23
+                
+                }
 
 
-http://localhost:8080/api/tokens/updateMessage/{tokenId} : PUT:
-{
-    "message" : "Message to be appended on the token"
-}
+# http://localhost:8080/api/tokens/display GET : for displaying the list of token to be served with corresponding counter number in order of service.
+
+
+#http://localhost:8080/api/customers POST : for registering a new customer
+                {
+                    "name":"John Doe",
+                    "phone":"7096858765",
+                    "address":"221 B bakers street",
+                    "typeOfCustomer":"1" //1 for premium and 2 for regular customer
+                }
