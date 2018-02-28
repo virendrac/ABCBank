@@ -2,6 +2,7 @@ package com.turvo.bank.controller;
 
 
 import com.turvo.bank.common.PriorityEnum;
+import com.turvo.bank.common.ServicesEnum;
 import com.turvo.bank.common.TokenStatusEnum;
 import com.turvo.bank.common.TypeOfServiceEnum;
 import com.turvo.bank.entity.Counter;
@@ -45,24 +46,30 @@ public class TokenRestController {
 
         try {
             if ( token.getCustomer()!=null && token.getCustomer().getCustomerId()!=null){
-                Customer currentCustomer = customerService.findOne(token.getCustomer().getCustomerId());
-                if (currentCustomer != null) {
+                if(token.getService() !=null && !token.getService().isEmpty() && isValidService(token.getService())) {
+                    Customer currentCustomer = customerService.findOne(token.getCustomer().getCustomerId());
+                    if (currentCustomer != null) {
 
-                    if (currentCustomer.getTypeOfCustomer() == TypeOfServiceEnum.PREMIUM.getValue()) {
-                        token.setPriority(PriorityEnum.HIGH.getValue());
+                        if (currentCustomer.getTypeOfCustomer() == TypeOfServiceEnum.PREMIUM.getValue()) {
+                            token.setPriority(PriorityEnum.HIGH.getValue());
+                        } else {
+                            token.setPriority(PriorityEnum.MEDIUM.getValue());
+                        }
+
+                        token.setTokenStatus(TokenStatusEnum.CREATED.getValue());
+                        token.setServiceCounterId(counterService.findCounterToBeassigned(token.getServices().get(0).toUpperCase()).getServiceCounterId());
+                        token.setCustomer(currentCustomer);
+                        return new ResponseEntity<>(tokenService.save(token), HttpStatus.CREATED);
+
                     } else {
-                        token.setPriority(PriorityEnum.MEDIUM.getValue());
+                        return ResponseEntity
+                                .status((HttpStatus.FAILED_DEPENDENCY))
+                                .body("Customer doesn't exist, please register the customer first!");
                     }
-
-                    token.setTokenStatus(TokenStatusEnum.CREATED.getValue());
-                    token.setServiceCounterId(counterService.findCounterToBeassigned(token.getServices().get(0)).getServiceCounterId());
-                    token.setCustomer(currentCustomer);
-                    return new ResponseEntity<>(tokenService.save(token), HttpStatus.CREATED);
-
-                } else {
+                }else{
                     return ResponseEntity
                             .status((HttpStatus.FAILED_DEPENDENCY))
-                            .body("Customer doesn't exist, please register the customer first!");
+                            .body("Please select valid services!");
                 }
 
             } else {
@@ -76,6 +83,20 @@ public class TokenRestController {
 
     }
 
+    private boolean isValidService(String services) {
+        String [] serviceArr=services.split(",");
+        for (String service: serviceArr){
+            service=service.trim().toUpperCase();
+            if(!service.equalsIgnoreCase( ServicesEnum.DEPOSIT.getValue() )
+                    && !service.equalsIgnoreCase( ServicesEnum.WITHDRAWL.getValue())
+                    && !service.equalsIgnoreCase( ServicesEnum.ACCOUNTOPENING.getValue())
+                    && !service.equalsIgnoreCase( ServicesEnum.LOAN.getValue())
+                    && !service.equalsIgnoreCase( ServicesEnum.OTHER.getValue())){
+                return false;
+            }
+        }
+        return true;
+    }
 
 
     @RequestMapping(
